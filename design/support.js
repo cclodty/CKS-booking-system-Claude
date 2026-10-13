@@ -7,7 +7,7 @@
  *   DCLogic（props / state / setState / renderVals）、onClick / onChange 等事件。
  *
  * 網址參數可覆寫 data-props 的預設值，例如 Drawer.dc.html?mode=approval&conflict=true。
- * 加上 ?embed=1 則不顯示右下角的預覽工具列（總覽頁的縮圖用）。
+ * 加上 ?embed=1（或被同源頁面以 iframe 嵌入）則不顯示右下角的預覽工具列。
  */
 (() => {
   'use strict';
@@ -249,9 +249,17 @@
       if (k !== 'embed') props[k] = parseParam(raw, declared[k]);
     });
 
+    const preview = declared.$preview || {};
+    if (!document.querySelector('meta[name="viewport"]')) {
+      const vp = document.createElement('meta');
+      vp.name = 'viewport';
+      vp.content = preview.width > 500 ? 'width=' + preview.width : 'width=device-width, initial-scale=1';
+      document.head.appendChild(vp);
+    }
+
     let inst;
     try {
-      const Component = new Function('DCLogic', script.textContent + '\nreturn Component;')(DCLogic);
+      const Component = compile(script.textContent);
       inst = new Component(props);
     } catch (e) {
       return fail(e);
@@ -287,7 +295,31 @@
     render();
     if (typeof inst.componentDidMount === 'function') inst.componentDidMount();
 
-    if (window.top === window.self && !params.has('embed')) toolbar(declared, inst, render);
+    if (!params.has('embed') && !sameOriginFrame()) toolbar(declared, inst, render);
+  }
+
+  // 頁面的內容安全政策若禁止 eval，改以內嵌 <script> 執行畫板的 Component
+  function compile(code) {
+    try {
+      return new Function('DCLogic', code + '\nreturn Component;')(DCLogic);
+    } catch (e) {
+      if (!(e instanceof EvalError)) throw e;
+      const s = document.createElement('script');
+      s.textContent = 'window.__dcComponent = (function (DCLogic) {\n' + code + '\nreturn Component;\n})(window.DCLogic);';
+      document.head.appendChild(s);
+      s.remove();
+      if (!window.__dcComponent) throw e;
+      return window.__dcComponent;
+    }
+  }
+
+  // 總覽頁的縮圖與畫板同源；外層若是別的網站（例如 Claude 的檢視器）則照常顯示工具列
+  function sameOriginFrame() {
+    try {
+      return !!window.frameElement;
+    } catch (e) {
+      return false;
+    }
   }
 
   // 右下角預覽工具列：返回總覽、切換 data-props 情境
@@ -295,7 +327,7 @@
     const css = document.createElement('style');
     css.textContent = [
       '#dc-root{width:fit-content;margin:0 auto}',
-      '.dcp{position:fixed;right:12px;bottom:12px;z-index:2147483647;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-radius:999px;background:#16222E;color:#FFFFFF;font:13px/1 system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;box-shadow:0 6px 24px rgba(22,34,46,.25)}',
+      '.dcp{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom, 0px));z-index:2147483647;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-radius:999px;background:#16222E;color:#FFFFFF;font:13px/1 system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;box-shadow:0 6px 24px rgba(22,34,46,.25)}',
       '.dcp a{color:#FFFFFF;text-decoration:none;font-weight:700}',
       '.dcp label{display:flex;align-items:center;gap:6px;color:#CFD6DD}',
       '.dcp select{font:inherit;padding:3px 6px;border-radius:6px;border:0}',
@@ -321,7 +353,11 @@
         if (k[0] !== '$' && inst.props[k] !== declared[k].default) q.set(k, String(inst.props[k]));
       }
       const s = q.toString();
-      history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+      try {
+        history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+      } catch (e) {
+        // 部分沙盒環境不允許改網址；情境切換照常生效
+      }
     };
 
     for (const k in declared) {

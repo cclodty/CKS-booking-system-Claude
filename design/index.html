@@ -3,15 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CKS 場地預約 · 互動預覽</title>
+<title>CKS 場地預約互動預覽</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">
 <style>
+/* 總覽：按畫布三行分組，縮圖按每行寬度等比縮放 */
 :root {
   --bg: #F4F2EC; --panel: #FBFAF7; --card: #FFFFFF;
-  --line: #E3E0D8; --line-soft: #EEEBE4;
+  --line: #E3E0D8; --line-hover: #B9C9C3; --sep: #D5D1C6;
   --ink: #16222E; --ink-2: #3E4B58; --muted: #5B6672;
-  --brand: #0B6E5F; --brand-ink: #08564A; --brand-soft: #E3F1EC;
-  --serif: 'Noto Serif TC', serif;
+  --brand: #0B6E5F; --brand-ink: #08564A;
+  --brand-soft: #E3F1EC; --brand-soft-hover: #D3EAE2; --brand-soft-ink: #0B5C4F;
+  --chip-bg: #16222E; --chip-fg: #FFFFFF;
+  --serif: 'Noto Serif TC', 'Songti TC', serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121A21; --panel: #172129; --card: #1C2731;
+    --line: #2C3945; --line-hover: #4E7A6E; --sep: #3A4855;
+    --ink: #E8ECEF; --ink-2: #B9C3CC; --muted: #93A0AB;
+    --brand: #5FD0B6; --brand-ink: #8FE0CC;
+    --brand-soft: #173A33; --brand-soft-hover: #1E4A41; --brand-soft-ink: #9FE3D2;
+    --chip-bg: #E8ECEF; --chip-fg: #16222E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121A21; --panel: #172129; --card: #1C2731;
+  --line: #2C3945; --line-hover: #4E7A6E; --sep: #3A4855;
+  --ink: #E8ECEF; --ink-2: #B9C3CC; --muted: #93A0AB;
+  --brand: #5FD0B6; --brand-ink: #8FE0CC;
+  --brand-soft: #173A33; --brand-soft-hover: #1E4A41; --brand-soft-ink: #9FE3D2;
+  --chip-bg: #E8ECEF; --chip-fg: #16222E;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; line-height: 1.6; }
@@ -24,11 +47,11 @@ a:hover { color: var(--brand-ink); }
 .top .wrap { min-height: 64px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 19px; font-weight: 700; }
 .brand img { width: 26px; height: 36px; object-fit: contain; }
-.top .sep { width: 1px; height: 18px; background: #D5D1C6; }
+.top .sep { width: 1px; height: 18px; background: var(--sep); }
 .top .sub { font-size: 15px; color: var(--ink-2); }
 
 .intro { padding: 36px 0 8px; display: flex; flex-direction: column; gap: 8px; }
-.intro h1 { margin: 0; font-family: var(--serif); font-size: 32px; line-height: 1.25; }
+.intro h1 { margin: 0; font-family: var(--serif); font-size: 32px; line-height: 1.25; text-wrap: balance; }
 .intro p { margin: 0; max-width: 46em; font-size: 15px; color: var(--ink-2); }
 
 .group { padding-top: 36px; }
@@ -39,9 +62,9 @@ a:hover { color: var(--brand-ink); }
 .thumb { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
 .thumb iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; pointer-events: none; }
 .cover { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-end; padding: 12px; text-decoration: none; }
-.cover span { opacity: 0; transition: opacity .15s; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: #FFFFFF; font-size: 13px; font-weight: 700; }
+.cover span { opacity: 0; transition: opacity .15s; padding: 6px 12px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-fg); font-size: 13px; font-weight: 700; }
 .card:hover .cover span { opacity: 1; }
-.card:hover .thumb { border-color: #B9C9C3; }
+.card:hover .thumb { border-color: var(--line-hover); }
 
 .meta h3 { margin: 0; font-size: 16px; line-height: 1.4; }
 .meta h3 a { color: var(--ink); text-decoration: none; }
@@ -49,14 +72,15 @@ a:hover { color: var(--brand-ink); }
 .meta p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
 .size { font-variant-numeric: tabular-nums; }
 .scenes { margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
-.scenes a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 8px; background: var(--brand-soft); color: #0B5C4F; font-weight: 500; text-decoration: none; }
-.scenes a:hover { background: #D3EAE2; color: #0B5C4F; }
+.scenes a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 8px; background: var(--brand-soft); color: var(--brand-soft-ink); font-weight: 500; text-decoration: none; }
+.scenes a:hover { background: var(--brand-soft-hover); color: var(--brand-soft-ink); }
 
 .notes { margin: 44px 0 0; padding: 22px 24px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
 .notes h2 { margin: 0 0 10px; font-family: var(--serif); font-size: 20px; }
 .notes ol { margin: 0; padding-left: 1.4em; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); column-gap: 32px; row-gap: 6px; font-size: 14px; color: var(--ink-2); }
 
 footer { padding: 28px 0 40px; font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .cover span { transition: none; } }
 
 @media (max-width: 640px) {
   .wrap { padding: 0 16px; }
