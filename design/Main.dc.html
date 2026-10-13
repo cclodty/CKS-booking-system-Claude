@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>場地預約 · 桌面時間表</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F2EC}
+a{color:#0B6E5F}a:hover{color:#08564A}
+.cf:hover{background:#E9F5F1 !important;border-color:#8CC7B8 !important}
+.cf:hover .cf-plus{opacity:1 !important}
+.rr:hover{box-shadow:inset 0 0 0 1px #D5D1C6}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #0B6E5F;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1040px; box-sizing: border-box; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif; color: #16222E; background: #F4F2EC; display: flex; flex-direction: column">
+
+<header style="height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 24px; display: flex; align-items: center; gap: 28px; background: #FBFAF7; border-bottom: 1px solid #E3E0D8">
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #16222E">
+<img src="assets/school-crest.png" alt="蔡高中學校徽" width="26" height="36" style="width: 26px; height: 36px; object-fit: contain">
+<span style="font-family: 'Noto Serif TC',serif; font-size: 19px; font-weight: 700; letter-spacing: 0.02em">蔡高中學</span>
+<span style="width: 1px; height: 18px; background: #D5D1C6"></span>
+<span style="font-size: 15px; color: #3E4B58">場地預約</span>
+</a>
+<nav aria-label="主要功能" style="display: flex; align-items: stretch; gap: 4px; height: 64px">
+<a href="Main.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 15px; font-weight: 700; color: #16222E; text-decoration: none; box-shadow: inset 0 -3px 0 #0B6E5F"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z"></path></svg>場地預約</a>
+<a href="Lookup.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 15px; font-weight: 500; color: #4A5663; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"></path></svg>查詢預約</a>
+<a href="Admin.dc.html" style="display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 15px; font-weight: 500; color: #4A5663; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3z"></path></svg>管理工作台</a>
+</nav>
+<span style="flex-grow: 1"></span>
+<span style="font-size: 13px; color: #5B6672">2026–27 學年</span>
+<a href="Admin.dc.html" style="height: 38px; box-sizing: border-box; padding: 0 14px; display: flex; align-items: center; gap: 8px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; font-size: 14px; font-weight: 500; color: #16222E; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a7 7 0 0 0-14 0v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0"></path></svg>管理員登入</a>
+</header>
+
+<div style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 20px 24px; display: flex; gap: 20px">
+
+<aside aria-label="選擇場地" style="width: 248px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 12px; background: #FFFFFF; border: 1px solid #DAD6CC; border-radius: 10px; color: #5B6672">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"></path></svg>
+<input type="search" placeholder="搜尋場地" aria-label="搜尋場地" value="{{q}}" onChange="{{onSearch}}" style="border: 0; outline: 0; flex-grow: 1; min-width: 0; font: inherit; font-size: 14px; background: transparent; color: #16222E">
+</label>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5B6672; padding: 8px 8px 4px">{{g.name}}</div>
+<sc-for list="{{g.rooms}}" as="r" hint-placeholder-count="3">
+<button class="rr" onClick="{{r.pick}}" aria-pressed="{{r.pressed}}" style="display: flex; align-items: center; gap: 10px; padding: 6px 8px; border: 0; border-radius: 10px; background: {{r.bg}}; text-align: left; cursor: pointer; color: #16222E; font-family: inherit">
+<img src="{{r.img}}" alt="" width="44" height="33" style="width: 44px; height: 33px; object-fit: cover; border-radius: 6px; flex-shrink: 0">
+<span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1">
+<span style="font-size: 14px; font-weight: {{r.fw}}">{{r.name}}</span>
+<span style="font-size: 12px; color: {{r.metaColor}}">{{r.meta}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{noRooms}}" hint-placeholder-val="{{false}}">
+<p style="margin: 8px; font-size: 13px; color: #5B6672">沒有符合的場地。</p>
+</sc-if>
+</aside>
+
+<main style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+
+<section aria-label="場地資料" style="background: #FFFFFF; border: 1px solid #E3E0D8; border-radius: 16px; padding: 14px 18px; display: flex; gap: 16px; align-items: center">
+<img src="{{room.img}}" alt="" width="112" height="84" style="width: 112px; height: 84px; object-fit: cover; border-radius: 10px; flex-shrink: 0">
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h1 style="margin: 0; font-family: 'Noto Serif TC',serif; font-size: 26px; font-weight: 700; line-height: 1.2">{{room.name}}</h1>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: {{room.pillBg}}; color: {{room.pillFg}}">{{room.modeLabel}}</span>
+</div>
+<div style="display: flex; gap: 16px; font-size: 13px; color: #3E4B58; flex-wrap: wrap">
+<sc-if value="{{room.showCap}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a6 6 0 0 0-12 0v2m16 0v-2a6 6 0 0 0-3-5M14 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0m3-3a4 4 0 0 1 0 7"></path></svg>上限 {{room.cap}} 人</span></sc-if>
+<sc-if value="{{room.hasLoc}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0zM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg>{{room.loc}}</span></sc-if>
+<span style="display: flex; align-items: center; gap: 5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"></path></svg>{{room.codeLabel}}</span>
+</div>
+<p style="margin: 0; font-size: 13px; color: #5B6672; line-height: 1.6">{{room.note}}</p>
+</div>
+<button style="flex-shrink: 0; height: 38px; padding: 0 14px; display: flex; align-items: center; gap: 8px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; font-family: inherit; font-size: 14px; color: #16222E; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6z"></path></svg>列印門口時間表</button>
+</section>
+
+<section aria-label="場地時間表" style="background: #FFFFFF; border: 1px solid #E3E0D8; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+<div style="padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #EEEBE4">
+<button onClick="{{prev}}" aria-label="{{prevLabel}}" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; color: #16222E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<strong aria-live="polite" style="font-size: 16px; min-width: 190px; text-align: center; font-variant-numeric: tabular-nums">{{rangeLabel}}</strong>
+<button onClick="{{next}}" aria-label="{{nextLabel}}" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; color: #16222E; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+<button onClick="{{goToday}}" style="height: 36px; padding: 0 12px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; font-family: inherit; font-size: 14px; color: #16222E; cursor: pointer">今天</button>
+<sc-if value="{{weekendNote}}" hint-placeholder-val="{{true}}">
+<span style="font-size: 12px; color: #0B5C4F; background: #E3F1EC; padding: 5px 10px; border-radius: 999px">今天是星期日，已直接顯示下週</span>
+</sc-if>
+<span style="flex-grow: 1"></span>
+<button style="height: 36px; padding: 0 12px; display: flex; align-items: center; gap: 6px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 10px; font-family: inherit; font-size: 14px; color: #16222E; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z"></path></svg>跳至日期</button>
+<div role="group" aria-label="檢視方式" style="display: flex; padding: 3px; background: #F1EFEA; border-radius: 10px; gap: 2px">
+<button onClick="{{setWeek}}" aria-pressed="{{isWeek}}" style="height: 30px; padding: 0 14px; border: 0; border-radius: 8px; font-family: inherit; font-size: 14px; cursor: pointer; background: {{weekBg}}; color: #16222E; font-weight: {{weekFw}}">週</button>
+<button onClick="{{setDay}}" aria-pressed="{{isDay}}" style="height: 30px; padding: 0 14px; border: 0; border-radius: 8px; font-family: inherit; font-size: 14px; cursor: pointer; background: {{dayBg}}; color: #16222E; font-weight: {{dayFw}}">日</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: {{cols}}; gap: 6px; padding: 10px 12px 6px; background: #FBFAF7; border-bottom: 1px solid #EEEBE4">
+<div style="font-size: 12px; color: #5B6672; display: flex; align-items: flex-end; padding: 0 0 4px 4px">時段</div>
+<sc-for list="{{heads}}" as="h" hint-placeholder-count="5">
+<button onClick="{{h.pick}}" aria-label="{{h.aria}}" style="border: 0; background: transparent; padding: 2px 0 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; font-family: inherit; color: #16222E">
+<span style="font-size: 12px; color: #5B6672">{{h.wk}}</span>
+<span style="font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1">{{h.d}}</span>
+<sc-if value="{{h.isHol}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 700; color: #5B6672; background: #EAE7E0; padding: 1px 8px; border-radius: 999px">全校假期</span></sc-if>
+</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; padding: 6px 12px 10px; gap: 6px">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="9">
+<sc-if value="{{row.divider}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 10px; height: 22px; font-size: 12px; color: #5B6672; padding-left: 4px">
+<span>午休 12:20–14:00</span><span style="flex-grow: 1; height: 1px; background: #E3E0D8"></span><span>不開放網頁預約</span>
+</div>
+</sc-if>
+<sc-if value="{{row.normal}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: {{cols}}; gap: 6px; height: 56px">
+<div style="display: flex; flex-direction: column; justify-content: center; padding-left: 4px">
+<span style="font-size: 14px; font-weight: 700">{{row.label}}</span>
+<span style="font-size: 12px; color: #5B6672; font-variant-numeric: tabular-nums">{{row.time}}</span>
+</div>
+<sc-for list="{{row.cells}}" as="c" hint-placeholder-count="5">
+<sc-if value="{{c.isFree}}" hint-placeholder-val="{{true}}">
+<button class="cf" onClick="{{c.toggle}}" aria-label="{{c.aria}}" aria-pressed="{{c.no}}" style="height: 56px; border: 1px solid #EAE7E0; background: #FFFFFF; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; color: #0B6E5F; padding: 0">
+<span class="cf-plus" style="display: flex; align-items: center; gap: 4px; font-size: 13px; opacity: 0.28"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>選取</span>
+</button>
+</sc-if>
+<sc-if value="{{c.isSel}}" hint-placeholder-val="{{false}}">
+<button onClick="{{c.toggle}}" aria-label="{{c.aria}}" aria-pressed="{{c.yes}}" style="height: 56px; border: 0; background: #0B6E5F; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 14px; font-weight: 700; color: #FFFFFF; padding: 0"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>已選</button>
+</sc-if>
+<sc-if value="{{c.isBooked}}" hint-placeholder-val="{{false}}">
+<button aria-label="{{c.aria}}" style="height: 56px; box-sizing: border-box; border: 0; background: #E6EBF1; border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1px; font-family: inherit; text-align: left; cursor: pointer; overflow: hidden; color: #1E3247">
+<span style="display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; white-space: nowrap">{{c.who}}<sc-if value="{{c.series}}" hint-placeholder-val="{{false}}"><span style="font-size: 10px; font-weight: 700; color: #1E3247; background: #CBD5E1; padding: 0 5px; border-radius: 4px">長期</span></sc-if></span>
+<span style="font-size: 12px; color: #44566A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">{{c.sub}}</span>
+</button>
+</sc-if>
+<sc-if value="{{c.isClosed}}" hint-placeholder-val="{{false}}">
+<div aria-label="{{c.aria}}" style="height: 56px; box-sizing: border-box; border-radius: 8px; background: repeating-linear-gradient(135deg,#F3F1EC 0 6px,#EAE7E0 6px 12px); display: flex; align-items: center; justify-content: center; padding: 4px 8px; font-size: 12px; font-weight: 500; color: #4A5663; text-align: center">{{c.reason}}</div>
+</sc-if>
+<sc-if value="{{c.isPast}}" hint-placeholder-val="{{false}}">
+<div aria-label="{{c.aria}}" style="height: 56px; border-radius: 8px; background: #F7F6F3"></div>
+</sc-if>
+</sc-for>
+</div>
+</sc-if>
+</sc-for>
+</div>
+
+<div style="display: flex; align-items: center; gap: 18px; padding: 10px 16px; border-top: 1px solid #EEEBE4; font-size: 12px; color: #3E4B58">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #FFFFFF; border: 1px solid #D5D1C6"></span>可預約（點選加入）</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #0B6E5F"></span>已選</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #E6EBF1"></span>已預約（點選看詳情）</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: repeating-linear-gradient(135deg,#F3F1EC 0 3px,#DDD9D0 3px 6px)"></span>不開放／假期／封鎖</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="font-size: 10px; font-weight: 700; color: #1E3247; background: #CBD5E1; padding: 0 5px; border-radius: 4px">長期</span>長期／批量預約</span>
+<span style="flex-grow: 1"></span>
+<span style="color: #5B6672">點日期標題可切換至單日檢視</span>
+</div>
+</section>
+</main>
+
+<aside aria-label="你的選取" style="width: 296px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px">
+<section style="background: #FFFFFF; border: 1px solid #E3E0D8; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 style="margin: 0; font-size: 17px; font-weight: 700">你的選取</h2>
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{true}}"><button onClick="{{clearAll}}" style="border: 0; background: transparent; font-family: inherit; font-size: 13px; color: #0B6E5F; cursor: pointer; padding: 4px">清除全部</button></sc-if>
+</div>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; font-size: 14px; line-height: 1.7; color: #3E4B58">在時間表點選空白課節加入；可跨日期多選，亦可切換週次繼續選。</p>
+</sc-if>
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{entries}}" as="e" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 13px; font-weight: 700; color: #3E4B58">{{e.label}}</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{e.chips}}" as="ch" hint-placeholder-count="2">
+<button onClick="{{ch.remove}}" aria-label="{{ch.aria}}" style="display: flex; align-items: center; gap: 4px; height: 30px; padding: 0 8px 0 10px; border: 0; background: #E3F1EC; color: #0B5C4F; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer">{{ch.label}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #EEEBE4; padding-top: 12px; font-size: 14px; color: #3E4B58">
+<span>{{dayCount}} 個日期</span><span>共 <strong style="font-size: 20px; color: #16222E">{{slotCount}}</strong> 節</span>
+</div>
+<sc-if value="{{needCode}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 8px; padding: 10px 12px; background: #F4F2EC; border-radius: 10px; font-size: 13px; line-height: 1.6; color: #3E4B58">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<span>多於一個日期：提交時需填寫場地管理員發出的一次性授權碼。</span>
+</div>
+</sc-if>
+<a href="Drawer.dc.html" style="height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #0B6E5F; color: #FFFFFF; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none">填寫預約資料<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+</sc-if>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<button disabled="{{yes}}" style="height: 46px; border: 0; background: #E3E0D8; color: #5B6672; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700">填寫預約資料</button>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #EEEBE4; padding-top: 12px">
+<div style="font-size: 12px; font-weight: 700; color: #5B6672; padding-bottom: 4px">其他預約方式</div>
+<button style="display: flex; align-items: center; gap: 10px; padding: 8px 6px; border: 0; background: transparent; border-radius: 8px; font-family: inherit; text-align: left; cursor: pointer; color: #16222E">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B6E5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"></path></svg>
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">連續預約</span><span style="font-size: 12px; color: #5B6672">每逢指定星期重複，一次提交</span></span>
+</button>
+<button style="display: flex; align-items: center; gap: 10px; padding: 8px 6px; border: 0; background: transparent; border-radius: 8px; font-family: inherit; text-align: left; cursor: pointer; color: #16222E">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B6E5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0"></path></svg>
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">自訂時間</span><span style="font-size: 12px; color: #5B6672">非整節時間；涉及的課節整節佔用</span></span>
+</button>
+</div>
+</section>
+<section style="background: #FBFAF7; border: 1px solid #E3E0D8; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<strong style="font-size: 14px">已提交的預約</strong>
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #3E4B58">用姓名或預約編號查詢；以提交時取得的取消碼取消。</p>
+<a href="Lookup.dc.html" style="font-size: 14px; font-weight: 700; color: #0B6E5F; text-decoration: none">前往查詢預約 →</a>
+</section>
+</aside>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { room: 1, week: 0, view: 'week', day: 1, q: '', sel: { '2026-09-29': [1, 2], '2026-09-30': [1] } };
+  }
+  renderVals() {
+    const s = this.state;
+    const B = 'assets/';
+    const ROOMS = [
+      { id: 1, name: '圖書館研討室(大)', g: '圖書館', cap: 12, cap2: true, mode: 'direct', loc: '中學部 · 圖書館', note: '午休為融合計劃保留，放學後可預約作學生自習。', img: B + 'library-room-large.jpg' },
+      { id: 2, name: '圖書館研討室(小)', g: '圖書館', cap: 6, cap2: true, mode: 'direct', loc: '中學部 · 圖書館', note: '適合小組討論及課後自習。', img: B + 'library-room-small.jpg' },
+      { id: 4, name: '120室', g: '會議及講座', cap: 36, mode: 'direct', loc: '中學部 · 教學樓', note: '設有大圓桌的職員會議室，適合職員交流及校務商議。', img: B + 'room-120.jpg' },
+      { id: 6, name: '219室', g: '會議及講座', cap: 30, mode: 'direct', loc: '', note: '供小型講座及校務會議使用的功能室。', img: B + 'room-219.jpg' },
+      { id: 7, name: '320室', g: '會議及講座', cap: 30, mode: 'direct', loc: '', note: '供小型講座及校務會議使用的功能室。', img: B + 'room-320.jpg' },
+      { id: 5, name: '音樂室', g: '專科室', cap: 35, mode: 'approval', loc: '中學部 · 教學樓', note: '樂器及設備使用安排請與管理員聯絡。', img: B + 'music-room.jpg' },
+      { id: 8, name: '美術室', g: '專科室', cap: 30, mode: 'direct', loc: '', note: '供美術課堂、繪畫及創作活動使用。', img: B + 'art-room.jpg' },
+      { id: 13, name: '語言室', g: '專科室', cap: 30, mode: 'direct', loc: '', note: '以英倫風傢俬及室內設計營造交流氣氛的英語會話室。', img: B + 'language-room.jpg' },
+      { id: 11, name: 'STEAM實驗室A', g: '專科室', cap: 30, mode: 'direct', loc: '', note: '供跨學科探究、實驗及動手創作活動使用。', img: B + 'steam-lab-a.jpg' },
+      { id: 12, name: 'STEAM實驗室B', g: '專科室', cap: 30, mode: 'direct', loc: '', note: '供跨學科探究、實驗及動手創作活動使用。', img: B + 'steam-lab-b.jpg' },
+      { id: 3, name: '禮堂-舞台', g: '禮堂', cap: 60, mode: 'approval', loc: '中學部 · 教學樓', note: '供演出、排練及舞台活動使用。', img: B + 'hall-stage.jpg' },
+      { id: 9, name: '禮堂-前半場', g: '禮堂', cap: 30, mode: 'approval', loc: '', note: '禮堂靠近舞台的前半場活動區。', img: B + 'hall-front.jpg' },
+      { id: 10, name: '禮堂-後半場', g: '禮堂', cap: 30, mode: 'approval', loc: '', note: '禮堂後半場活動區。', img: B + 'hall-back.jpg' }
+    ];
+    const SLOTS = [
+      { id: 1, l: '第 1 節', t: '08:30–09:10' }, { id: 2, l: '第 2 節', t: '09:20–10:00' }, { id: 4, l: '第 3 節', t: '10:05–10:45' },
+      { id: 5, l: '第 4 節', t: '10:50–11:35' }, { id: 6, l: '第 5 節', t: '11:40–12:20' }, { lunch: true },
+      { id: 8, l: '第 6 節', t: '14:00–14:40' }, { id: 9, l: '第 7 節', t: '14:45–15:30' }, { id: 11, l: '第 8 節', t: '15:35–16:15' },
+      { id: 12, l: '放學後', t: '16:15–17:45' }
+    ];
+    const TODAY = '2026-09-27';
+    const pad = n => String(n).padStart(2, '0');
+    const add = (ds, n) => { const d = new Date(ds + 'T12:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+    const WK = ['日', '一', '二', '三', '四', '五', '六'];
+    const wd = ds => WK[new Date(ds + 'T12:00:00').getDay()];
+    const md = ds => (+ds.slice(5, 7)) + '月' + (+ds.slice(8, 10)) + '日';
+    const dn = ds => Math.round(new Date(ds + 'T12:00:00').getTime() / 86400000);
+    const mon = add('2026-09-28', 7 * s.week);
+    const week = [0, 1, 2, 3, 4].map(i => add(mon, i));
+    const isDayView = s.view === 'day';
+    const dates = isDayView ? [week[s.day]] : week;
+    const room = ROOMS.find(r => r.id === s.room) || ROOMS[0];
+    const HOL = { '2026-10-01': '國慶日' };
+    const BLOCK = { '1|2026-10-02|12': '封鎖：校舍維修' };
+    const FIX = {
+      '1|2026-09-28|1': ['陳老師', '中文科 · 閱讀分享', true], '1|2026-09-28|2': ['陳老師', '中文科 · 閱讀分享', true],
+      '1|2026-09-29|4': ['張老師', '數學科 · 學生輔導', false],
+      '1|2026-09-30|8': ['何老師', '英文科 · English Club', true], '1|2026-09-30|9': ['何老師', '英文科 · English Club', true],
+      '1|2026-10-02|6': ['林老師', '中文科 · 小組討論', false],
+      '1|2026-09-28|12': ['梁同學', 'F4A · 自習小組', true], '1|2026-09-29|12': ['梁同學', 'F4A · 自習小組', true]
+    };
+    const PEOPLE = [['陳老師', '中文科 · 閱讀分享'], ['李老師', '中文科 · 專題研習'], ['張老師', '數學科 · 學生輔導'], ['何老師', '英文科 · English Club'], ['黃老師', '科學科 · 實驗準備'], ['梁同學', 'F4A · 自習小組'], ['周老師', '輔導組 · 個別面談']];
+    const idx = {}; let k = 0; SLOTS.forEach(sl => { if (!sl.lunch) idx[sl.id] = k++; });
+    const gen = (rid, ds, i) => {
+      if (rid === 1 && s.week === 0) return null;
+      const pair = Math.floor(i / 2), h = (rid * 37 + dn(ds) * 11 + pair * 5) % 19;
+      if (h < 4) { const p = PEOPLE[(rid + dn(ds) + pair) % PEOPLE.length]; return [p[0], p[1], h === 0]; }
+      return null;
+    };
+    const sel = s.sel;
+    const toggleFor = (ds, id) => () => {
+      const cur = Object.assign({}, this.state.sel);
+      const list = (cur[ds] || []).slice(); const at = list.indexOf(id);
+      if (at >= 0) list.splice(at, 1); else list.push(id);
+      list.sort((a, b) => idx[a] - idx[b]);
+      if (list.length) cur[ds] = list; else delete cur[ds];
+      this.setState({ sel: cur });
+    };
+    const kindText = { free: '可預約', sel: '已選取', booked: '已預約', closed: '不開放', past: '已過期' };
+    const rows = SLOTS.map(sl => {
+      if (sl.lunch) return { key: 'lunch', divider: true, normal: false, cells: [] };
+      const cells = dates.map(ds => {
+        const key = s.room + '|' + ds + '|' + sl.id;
+        const bk = FIX[key] || gen(s.room, ds, idx[sl.id]);
+        const picked = (sel[ds] || []).includes(sl.id);
+        let kind = 'free', reason = '';
+        if (ds < TODAY) kind = 'past';
+        else if (HOL[ds]) { kind = 'closed'; reason = sl.id === 1 ? HOL[ds] : ''; }
+        else if (BLOCK[key]) { kind = 'closed'; reason = BLOCK[key]; }
+        else if (bk) kind = 'booked';
+        else if (picked) kind = 'sel';
+        return {
+          key, isFree: kind === 'free', isSel: kind === 'sel', isBooked: kind === 'booked', isClosed: kind === 'closed', isPast: kind === 'past',
+          who: bk ? bk[0] : '', sub: bk ? bk[1] : '', series: !!(bk && bk[2]), reason, yes: true, no: false,
+          toggle: toggleFor(ds, sl.id),
+          aria: md(ds) + ' 星期' + wd(ds) + ' ' + sl.l + '，' + (kind === 'booked' ? '已預約：' + bk[0] + ' ' + bk[1] : kind === 'closed' ? (reason || HOL[ds] || '不開放') : kindText[kind])
+        };
+      });
+      return { key: 'r' + sl.id, divider: false, normal: true, label: sl.l, time: sl.t, cells };
+    });
+    const heads = dates.map(ds => ({
+      key: ds, wk: '星期' + wd(ds), d: +ds.slice(8, 10), isHol: !!HOL[ds],
+      aria: '只看 ' + md(ds) + ' 星期' + wd(ds),
+      pick: () => this.setState({ view: 'day', day: week.indexOf(ds) })
+    }));
+    const slotLabel = id => (SLOTS.find(x => x.id === id) || {}).l;
+    const entries = Object.keys(sel).sort().map(ds => ({
+      key: ds, label: md(ds) + '（' + wd(ds) + '）',
+      chips: sel[ds].map(id => ({ key: ds + '-' + id, label: slotLabel(id), aria: '移除 ' + md(ds) + ' ' + slotLabel(id), remove: toggleFor(ds, id) }))
+    }));
+    const slotCount = entries.reduce((n, e) => n + e.chips.length, 0);
+    const q = s.q.trim();
+    const order = ['圖書館', '會議及講座', '專科室', '禮堂'];
+    const groups = order.map(g => ({
+      key: g, name: g,
+      rooms: ROOMS.filter(r => r.g === g && r.name.includes(q)).map(r => ({
+        key: 'room' + r.id, name: r.name, img: r.img,
+        meta: (r.cap2 ? '上限 ' + r.cap + ' 人 · ' : '') + (r.mode === 'approval' ? '需經審批' : '直接預約'),
+        metaColor: r.mode === 'approval' ? '#8A4F00' : '#5B6672',
+        pressed: r.id === s.room, bg: r.id === s.room ? '#DCEEE8' : 'transparent', fw: r.id === s.room ? 700 : 500,
+        pick: () => this.setState({ room: r.id, sel: r.id === this.state.room ? this.state.sel : {} })
+      }))
+    })).filter(g => g.rooms.length);
+    const approval = room.mode === 'approval';
+    const move = dir => () => {
+      const st = this.state;
+      if (st.view === 'week') return this.setState({ week: st.week + dir });
+      let d = st.day + dir, w = st.week;
+      if (d < 0) { d = 4; w -= 1; } else if (d > 4) { d = 0; w += 1; }
+      this.setState({ day: d, week: w });
+    };
+    return {
+      q: s.q, onSearch: e => this.setState({ q: e.target.value }), groups, noRooms: groups.length === 0,
+      room: {
+        name: room.name, img: room.img, cap: room.cap, showCap: !!room.cap2, loc: room.loc, hasLoc: !!room.loc, note: room.note,
+        modeLabel: approval ? '需經審批' : '直接預約', pillBg: approval ? '#FBEFD9' : '#E3F1EC', pillFg: approval ? '#8A4F00' : '#0B5C4F',
+        codeLabel: approval ? '連續預約毋須授權碼' : '多於一個日期須授權碼'
+      },
+      rangeLabel: isDayView ? md(dates[0]) + '（星期' + wd(dates[0]) + '）' : md(week[0]) + ' – ' + md(week[4]),
+      prev: move(-1), next: move(1), prevLabel: isDayView ? '上一日' : '上一週', nextLabel: isDayView ? '下一日' : '下一週',
+      goToday: () => this.setState({ week: 0, day: 0 }), weekendNote: s.week === 0,
+      setWeek: () => this.setState({ view: 'week' }), setDay: () => this.setState({ view: 'day' }),
+      isWeek: !isDayView, isDay: isDayView,
+      weekBg: isDayView ? 'transparent' : '#FFFFFF', dayBg: isDayView ? '#FFFFFF' : 'transparent',
+      weekFw: isDayView ? 500 : 700, dayFw: isDayView ? 700 : 500,
+      cols: isDayView ? '92px minmax(0, 1fr)' : '92px repeat(5, minmax(0, 1fr))',
+      heads, rows, entries, slotCount, dayCount: entries.length,
+      hasSel: slotCount > 0, empty: slotCount === 0, needCode: !approval && entries.length > 1,
+      clearAll: () => this.setState({ sel: {} }), yes: true
+    };
+  }
+}
+</script>
+</body>
+</html>

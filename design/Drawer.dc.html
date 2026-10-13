@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>預約側欄 · 三步提交</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F2EC}
+a{color:#0B6E5F}a:hover{color:#08564A}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #0B6E5F;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 560px; height: 1040px; box-sizing: border-box; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif; color: #16222E; background: #FFFFFF; display: flex; flex-direction: column; box-shadow: -12px 0 40px rgba(22,34,46,0.12)">
+
+<header style="padding: 20px 24px 16px; border-bottom: 1px solid #EEEBE4; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: flex-start; gap: 12px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; color: #5B6672">圖書館研討室(大) · {{modeLabel}}</span>
+<h2 style="margin: 0; font-family: 'Noto Serif TC',serif; font-size: 24px; font-weight: 700">{{title}}</h2>
+</div>
+<a href="Main.dc.html" aria-label="關閉並返回時間表" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 1px solid #D5D1C6; border-radius: 10px; color: #16222E"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></a>
+</div>
+<ol aria-label="預約步驟" style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+<li aria-current="{{st.current}}" style="display: flex; flex-direction: column; gap: 6px">
+<span style="height: 4px; border-radius: 2px; background: {{st.bar}}"></span>
+<span style="font-size: 13px; font-weight: {{st.fw}}; color: {{st.fg}}">{{st.n}} · {{st.label}}</span>
+</li>
+</sc-for>
+</ol>
+</header>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px">
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<section aria-label="已選安排" style="background: #F7F6F2; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<strong style="font-size: 14px">2 個日期 · 3 個課節</strong>
+<a href="Main.dc.html" style="font-size: 13px; font-weight: 700; text-decoration: none">在時間表修改</a>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>9月29日（二）</span><span style="color: #3E4B58">第 1 節、第 2 節 · 08:30–10:00</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>9月30日（三）</span><span style="color: #3E4B58">第 1 節 · 08:30–09:10</span></div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; grid-column: span 2">預約人
+<input value="{{person}}" onChange="{{onPerson}}" autoComplete="name" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #CFCAC0; border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; color: #16222E">
+</label>
+<fieldset style="grid-column: span 2; border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+<legend style="font-size: 14px; font-weight: 700; padding: 0 0 6px">使用對象</legend>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 3px; background: #F1EFEA; border-radius: 10px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="height: 38px; border: 0; border-radius: 8px; font-family: inherit; font-size: 14px; cursor: pointer; background: {{t.bg}}; font-weight: {{t.fw}}; color: #16222E">{{t.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+<sc-if value="{{isStaff}}" hint-placeholder-val="{{true}}">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">科組 <span style="font-weight: 400; color: #5B6672; font-size: 12px">選填 · 時間表上顯示</span>
+<input value="{{dept}}" onChange="{{onDept}}" placeholder="例如：數學科" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #CFCAC0; border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; color: #16222E">
+</label>
+</sc-if>
+<sc-if value="{{isStudent}}" hint-placeholder-val="{{false}}">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">班級 <span style="font-weight: 400; color: #5B6672; font-size: 12px">選填</span>
+<input value="{{cls}}" onChange="{{onCls}}" placeholder="例如：F4A" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #CFCAC0; border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; color: #16222E">
+</label>
+</sc-if>
+<sc-if value="{{isExternal}}" hint-placeholder-val="{{false}}"><div></div></sc-if>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">使用人數 <span style="font-weight: 400; color: #5B6672; font-size: 12px">上限 12 人</span>
+<input type="number" min="1" max="12" value="{{people}}" onChange="{{onPeople}}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #CFCAC0; border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; color: #16222E">
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; grid-column: span 2">用途 <span style="font-weight: 400; color: #5B6672; font-size: 12px">選填 · 時間表上公開顯示</span>
+<textarea rows="2" value="{{purpose}}" onChange="{{onPurpose}}" placeholder="例如：閱讀小組、科組會議" style="box-sizing: border-box; padding: 10px 12px; border: 1px solid #CFCAC0; border-radius: 10px; font: inherit; font-weight: 400; font-size: 15px; color: #16222E; resize: vertical"></textarea>
+</label>
+<sc-if value="{{needCode}}" hint-placeholder-val="{{true}}">
+<label style="grid-column: span 2; display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; padding: 14px 16px; background: #F7F6F2; border-radius: 12px">連續預約授權碼
+<span style="font-weight: 400; color: #3E4B58; font-size: 13px; line-height: 1.6">你選了 2 個日期。此場地需要場地管理員發出的一次性授權碼；整組成功提交後才會消耗。</span>
+<input value="{{code}}" onChange="{{onCode}}" placeholder="例如：7F3A9C21B04E" autoComplete="off" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #CFCAC0; border-radius: 10px; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-weight: 400; font-size: 15px; letter-spacing: 0.08em; color: #16222E; background: #FFFFFF">
+</label>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: {{noticeBg}}; color: {{noticeFg}}; font-size: 14px; line-height: 1.6">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="M12 11v6m0-10v1M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0"></path></svg>
+<span>{{noticeText}}</span>
+</div>
+<section style="border: 1px solid #E3E0D8; border-radius: 12px; overflow: hidden">
+<div style="padding: 14px 16px; background: #FBFAF7; border-bottom: 1px solid #EEEBE4; display: flex; flex-direction: column; gap: 4px">
+<strong style="font-size: 16px">{{personLine}}</strong>
+<span style="font-size: 13px; color: #3E4B58">{{detailLine}}</span>
+</div>
+<sc-for list="{{review}}" as="r" hint-placeholder-count="2">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #EEEBE4; background: {{r.bg}}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<strong style="font-size: 15px">{{r.date}}</strong>
+<span style="font-size: 13px; color: #3E4B58">{{r.slots}}</span>
+</div>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{r.pillBg}}; color: {{r.pillFg}}">{{r.status}}</span>
+</div>
+</sc-for>
+</section>
+<sc-if value="{{hasConflict}}" hint-placeholder-val="{{false}}">
+<button onClick="{{dropConflict}}" style="height: 42px; border: 1px solid #0B6E5F; background: #FFFFFF; color: #0B6E5F; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">移除衝突日期並重新核對</button>
+</sc-if>
+<p style="margin: 0; font-size: 13px; color: #5B6672; line-height: 1.6">授權碼 {{codeMask}} · 成功提交整組後才會消耗一次。</p>
+</sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 0 4px; text-align: center">
+<span style="width: 60px; height: 60px; border-radius: 50%; background: {{doneBg}}; color: {{doneFg}}; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{doneIcon}}"></path></svg></span>
+<h3 style="margin: 0; font-family: 'Noto Serif TC',serif; font-size: 24px">{{doneTitle}}</h3>
+<p style="margin: 0; font-size: 14px; color: #3E4B58">{{doneText}}</p>
+</div>
+<section style="border: 1px solid #E3E0D8; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; color: #5B6672">預約編號</span>
+<strong style="font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 18px; letter-spacing: 0.04em">CKS-260927-7F3A9C21B04E</strong>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #5B6672">取消碼（只在此顯示一次）</span>
+<div style="display: flex; gap: 8px" aria-label="取消碼 4 8 2 7">
+<span style="width: 52px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F4F2EC; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 30px; font-weight: 700">4</span>
+<span style="width: 52px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F4F2EC; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 30px; font-weight: 700">8</span>
+<span style="width: 52px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F4F2EC; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 30px; font-weight: 700">2</span>
+<span style="width: 52px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F4F2EC; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 30px; font-weight: 700">7</span>
+</div>
+</div>
+<div style="display: flex; gap: 8px; padding: 10px 12px; background: #FBEFD9; color: #6B3D00; border-radius: 10px; font-size: 13px; line-height: 1.6">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+<span>請截圖或複製保存。查詢頁不會再顯示取消碼；遺失後只能由場地管理員代為取消。</span>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{review}}" as="r" hint-placeholder-count="2">
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 0; border-bottom: 1px solid #EEEBE4">
+<span>{{r.date}} · <span style="color: #3E4B58">{{r.slots}}</span></span>
+<span style="font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: {{r.donePillBg}}; color: {{r.donePillFg}}">{{r.doneStatus}}</span>
+</div>
+</sc-for>
+</section>
+</sc-if>
+</div>
+
+<footer style="padding: 16px 24px; border-top: 1px solid #EEEBE4; display: flex; gap: 10px; justify-content: flex-end; background: #FFFFFF">
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<a href="Main.dc.html" style="height: 46px; box-sizing: border-box; padding: 0 18px; display: flex; align-items: center; border: 1px solid #D5D1C6; border-radius: 12px; font-size: 15px; font-weight: 500; color: #16222E; text-decoration: none">返回時間表</a>
+<button onClick="{{toReview}}" style="height: 46px; padding: 0 20px; display: flex; align-items: center; gap: 8px; border: 0; background: #0B6E5F; color: #FFFFFF; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">下一步：核對安排<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<button onClick="{{toForm}}" style="height: 46px; padding: 0 18px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 500; color: #16222E; cursor: pointer">返回修改</button>
+<button onClick="{{submit}}" disabled="{{hasConflict}}" style="height: 46px; padding: 0 22px; border: 0; background: {{submitBg}}; color: {{submitFg}}; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">{{submitLabel}}</button>
+</sc-if>
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<button style="height: 46px; padding: 0 18px; display: flex; align-items: center; gap: 8px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 500; color: #16222E; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h11v11H9zM5 15H4V4h11v1"></path></svg>複製編號及取消碼</button>
+<a href="Main.dc.html" style="height: 46px; box-sizing: border-box; padding: 0 22px; display: flex; align-items: center; border: 0; background: #0B6E5F; color: #FFFFFF; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none">完成</a>
+</sc-if>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["direct","approval"],"default":"direct","section":"情境"},"conflict":{"editor":"boolean","default":false,"section":"情境"},"$preview":{"width":560,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: 1, type: 'staff', person: '陳大文', dept: '數學科', cls: '', people: '8', purpose: '科組會議', code: '7F3A9C21B04E', dropped: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const approval = (this.props.mode ?? 'direct') === 'approval';
+    const conflict = !!(this.props.conflict ?? false) && !s.dropped;
+    const set = k => e => this.setState({ [k]: e.target.value });
+    const labels = ['填寫資料', '核對安排', approval ? '已提交' : '完成'];
+    const steps = labels.map((label, i) => {
+      const n = i + 1, done = n < s.step, cur = n === s.step;
+      return { key: 's' + n, n, label, current: cur ? 'step' : 'false', bar: done || cur ? '#0B6E5F' : '#E3E0D8', fw: cur ? 700 : 500, fg: cur ? '#16222E' : done ? '#0B5C4F' : '#5B6672' };
+    });
+    const types = [['staff', '老師'], ['student', '學生'], ['external', '校外使用者']].map(([k, label]) => ({
+      key: k, label, on: s.type === k, bg: s.type === k ? '#FFFFFF' : 'transparent', fw: s.type === k ? 700 : 500, pick: () => this.setState({ type: k })
+    }));
+    const who = s.type === 'staff' && s.person && !/(老師|教師)$/.test(s.person) ? s.person + '老師' : s.person;
+    const extra = s.type === 'staff' ? s.dept : s.type === 'student' ? s.cls : '校外使用者';
+    const rows = [
+      { key: 'a', date: '9月29日（二）', slots: '第 1 節、第 2 節 · 08:30–10:00', conflict: false },
+      { key: 'b', date: '9月30日（三）', slots: '第 1 節 · 08:30–09:10', conflict: conflict }
+    ];
+    const review = rows.map(r => ({
+      key: r.key, date: r.date, slots: r.conflict ? '已有成立預約佔用課節' : r.slots,
+      bg: r.conflict ? '#FDF1EF' : '#FFFFFF',
+      status: r.conflict ? '不可預約' : approval ? '提交後待審批' : '確認後即成立',
+      pillBg: r.conflict ? '#FADCD7' : approval ? '#FBEFD9' : '#E3F1EC',
+      pillFg: r.conflict ? '#9B1C10' : approval ? '#8A4F00' : '#0B5C4F',
+      doneStatus: approval ? '待審批' : '已成立', donePillBg: approval ? '#FBEFD9' : '#E3F1EC', donePillFg: approval ? '#8A4F00' : '#0B5C4F'
+    }));
+    return {
+      steps, types, s1: s.step === 1, s2: s.step === 2, s3: s.step === 3,
+      title: s.step === 1 ? '填寫預約資料' : s.step === 2 ? '核對安排' : (approval ? '申請已提交' : '預約已成立'),
+      modeLabel: approval ? '需經審批' : '直接預約',
+      person: s.person, dept: s.dept, cls: s.cls, people: s.people, purpose: s.purpose, code: s.code,
+      onPerson: set('person'), onDept: set('dept'), onCls: set('cls'), onPeople: set('people'), onPurpose: set('purpose'), onCode: set('code'),
+      isStaff: s.type === 'staff', isStudent: s.type === 'student', isExternal: s.type === 'external',
+      needCode: !approval,
+      personLine: who || '（未填預約人）',
+      detailLine: [extra, s.people + ' 人', s.purpose].filter(Boolean).join(' · '),
+      review, hasConflict: conflict,
+      noticeText: conflict ? '有 1 個日期目前不可預約。移除後再核對；其餘日期不會自動送出。' : approval ? '此場地需經審批。提交後每個日期會列為「待審批」，批准後才成立。' : '請核對以下日期及課節；按「確認提交」後即成立。',
+      noticeBg: conflict ? '#FDF1EF' : '#F4F2EC', noticeFg: conflict ? '#7A1A10' : '#3E4B58',
+      codeMask: approval ? '（此場地毋須）' : s.code.slice(0, 4) + '••••' + s.code.slice(-2),
+      dropConflict: () => this.setState({ dropped: true }),
+      submitLabel: approval ? '提交申請' : '確認提交',
+      submitBg: conflict ? '#E3E0D8' : '#0B6E5F', submitFg: conflict ? '#5B6672' : '#FFFFFF',
+      toReview: () => this.setState({ step: 2 }), toForm: () => this.setState({ step: 1 }), submit: () => this.setState({ step: 3 }),
+      doneTitle: approval ? '申請已提交' : '預約已成立',
+      doneText: approval ? '管理員批准後才成立；可隨時在「查詢預約」查看狀態。' : '圖書館研討室(大) · 2 個日期 · 3 個課節',
+      doneBg: approval ? '#FBEFD9' : '#E3F1EC', doneFg: approval ? '#8A4F00' : '#0B6E5F',
+      doneIcon: approval ? 'M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0' : 'm5 12 4 4L19 6'
+    };
+  }
+}
+</script>
+</body>
+</html>

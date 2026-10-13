@@ -1,194 +1,81 @@
-# 課室 / 功能室預約系統（PHP + MySQL 版）
+# CKS 場地預約 UI 重設計
 
-原專案是「純前端 JS + Vercel Serverless + Firebase Firestore（並以 Google Apps Script 作備援）」的架構。
-本版本把後端整個換成 **PHP + MySQL**，可直接放在一般虛擬主機、校內伺服器或 Docker 上執行，
-不再需要 Vercel、Firebase 或 Google Apps Script。
+蔡高中學場地預約系統的介面重設計稿。原本在 Claude Design 畫布上製作，現搬到此 repo 繼續開發。
 
-前端介面與操作流程維持原樣（Vanilla JS ES Modules + Tailwind），API 的請求格式
-（`POST { action, payload }` → `{ success, ... }`）也刻意保持一致，方便對照原始碼。
+> 先前的 PHP + MySQL 版本已從此分支移除，需要時可從 git 歷史找回（commit `90d486a`）。
 
 ---
 
-## 功能
+## 預覽
 
-- **預約**：單日 / 整週檢視、依名稱或室號搜尋課室、多時段一次選取、自訂連續時間段、重複（每週）預約
-- **我的預約**：以姓名查詢今天及未來的預約，憑 4 位數取消密碼自行取消
-- **時間表**：以「週一起算 6 天」產生各課室時間表，可列印或匯出 PDF
-- **後台管理**：預約管理（搜尋 / 分頁 / 編輯 / 鎖定 / 批量刪除）、課室、時間段、班級、假期、
-  帳號、權限分配、列印欄位設定、連續預約授權碼、自選日期區間的時間表報表
-- **匯入匯出**：預約記錄匯出 Excel、以範本批次匯入、資料備份與還原
+用瀏覽器直接開啟 **`design/index.html`**（雙擊即可，毋須伺服器）。總覽頁列出全部畫面的縮圖，
+點任何一個開啟全尺寸、可操作的預覽；右下角工具列可返回總覽。資料為示範資料，重新整理後還原。
 
----
+線上版：<https://claude.ai/artifact/8NH6o45Cg63DXPvtosAXmc>（預設只有擁有者可開啟，可在頁面的 Share 選單分享）。
+這是發佈時的快照，修改 `design/` 後需要重新發佈才會更新。
 
-## 系統需求
+預約側欄的情境可用網址參數切換，亦可在工具列切換：
 
-- PHP 8.0 以上，需啟用 `pdo_mysql`、`json`、`session`、`mbstring`
-- MySQL 5.7+ 或 MariaDB 10.3+
-- Apache / Nginx，或開發用的 PHP 內建伺服器
-
-## 基線驗收
-
-目前版本以舊有前端的資料結構、操作流程及 API 合約作逆向工程，先建立可操作的 PHP + MySQL
-功能基線；介面與效能優化留待基線驗收後再進行。毋須連接資料庫的快速檢查可用來確認核心時段規則、
-日期驗證、API 資料集合，以及頁面引用的本機資源均完整：
-
-```bash
-php tests/smoke.php
-```
-
-完整驗收則依下方 Docker 安裝步驟啟動系統，再測試預約、取消及管理員操作流程。
-
----
-
-## 安裝
-
-### 方式一：Docker（最快，適合先試玩）
-
-```bash
-docker compose up -d
-docker compose exec app php database/install.php
-# 開啟 http://localhost:8080
-```
-
-### 方式二：本機 PHP 內建伺服器
-
-```bash
-# 1. 設定連線
-cp config/config.example.php config/config.php
-$EDITOR config/config.php          # 或改用 .env / 環境變數
-
-# 2. 建立資料表與初始資料
-php database/install.php
-
-# 3. 啟動
-php -S localhost:8080 -t .
-# 開啟 http://localhost:8080
-```
-
-### 方式三：一般虛擬主機 / 校內伺服器
-
-1. 將整個專案上傳到網站根目錄。
-2. 用 phpMyAdmin 之類的工具建立資料庫（字集 `utf8mb4`），依序匯入
-   `database/schema.sql` 與 `database/seed.sql`。
-3. 複製 `config/config.example.php` 為 `config/config.php` 並填入連線資訊。
-4. 確認 `config/`、`src/`、`database/` 三個目錄無法被瀏覽器直接存取
-   （已附 `.htaccess`；Apache 需開啟 `AllowOverride All`，Nginx 請參考下方設定）。
-
-Nginx 範例：
-
-```nginx
-location ~ ^/(config|src|database)/ { deny all; return 404; }
-location ~ \.php$ { fastcgi_pass unix:/run/php/php8.2-fpm.sock; include fastcgi_params;
-                    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; }
-```
-
-### 預設帳號
-
-| 帳號 | 密碼 | 角色 |
-|---|---|---|
-| `admin` | `admin123` | 超級管理員 |
-
-> ⚠️ **請在上線前立即登入後台 →「帳號管理」修改密碼。**
-
----
-
-## 設定
-
-連線設定的優先順序為：**環境變數 → `config/config.php` → `config/config.example.php`**。
-
-| 環境變數 | 說明 | 預設 |
-|---|---|---|
-| `DB_HOST` | 資料庫主機 | `localhost` |
-| `DB_PORT` | 連接埠 | `3306` |
-| `DB_NAME` | 資料庫名稱 | `booking_system` |
-| `DB_USER` / `DB_PASS` | 帳號密碼 | `booking` / `booking` |
-| `APP_TIMEZONE` | 系統時區 | `Asia/Hong_Kong` |
-
-也可以複製 `.env.example` 為 `.env`。`config/config.php` 與 `.env` 都已列入 `.gitignore`。
+| 網址 | 情境 |
+|---|---|
+| `Drawer.dc.html` | 直接預約 |
+| `Drawer.dc.html?mode=approval` | 需經審批 |
+| `Drawer.dc.html?conflict=true` | 核對時發現撞期 |
 
 ---
 
 ## 目錄結構
 
 ```
-├── index.html                前端頁面（原本壓縮檔內沒有 HTML，此版本依 JS 需求重建）
-├── assets/
-│   ├── css/app.css           hidden-view、列印樣式等 Tailwind 涵蓋不到的部分
-│   ├── js/                   前端模組（由原始 js/ 移植）
-│   └── vendor/README.md      離線 / 內網部署時如何改用本機套件
-├── api/syncData.php          單一進入點 API（取代原本的 Vercel Function）
-├── src/
-│   ├── bootstrap.php         PSR-4 自動載入（不需要 Composer）
-│   ├── Config.php            設定讀取
-│   ├── Database.php          PDO 連線
-│   ├── Schema.php            前端 camelCase 欄位 ↔ 資料表 snake_case 欄位對應
-│   ├── Repository.php        通用讀寫（含 Firestore 式的 merge 更新）
-│   ├── BookingService.php    預約規則（假期、關閉時段、重疊、人數、授權碼）
-│   ├── Auth.php              Session 登入與密碼雜湊
-│   └── TimeHelper.php        時段字串解析與重疊判斷
-├── config/                   設定檔
-├── database/                 schema.sql / seed.sql / install.php
-└── docker/, docker-compose.yml
+design/
+├── index.html             預覽總覽頁
+├── support.js             本地預覽用的執行環境，令 *.dc.html 可直接在瀏覽器開啟
+├── canvas.json            畫布索引：各畫板的位置、尺寸、標題及設計重點備註
+├── Main.dc.html           桌面 · 時間表先行（可點選課節）       1440 × 1040
+├── Drawer.dc.html         桌面 · 預約側欄：填寫 → 核對 → 完成   560 × 1040
+├── Mobile.dc.html         手機 · 單日課節清單                   401 × 844
+├── MobileRooms.dc.html    手機 · 選擇場地                       390 × 844
+├── Lookup.dc.html         查詢預約 · 按預約編號分組取消         1440 × 960
+├── Admin.dc.html          管理工作台 · 待審申請                 1440 × 960
+└── assets/                校徽及 13 個場地相片（已壓縮，每張約 17KB）
 ```
 
----
+畫板之間以相對連結互通（例如時間表的「預約」按鈕連到 `Drawer.dc.html`）。
 
-## API
+## 設計重點（功能不變）
 
-全部走 `POST api/syncData.php`，內容為 `{ "action": "...", "payload": { ... } }`。
+1. 時間表先行：拿走大橫幅與場地輪播，打開即見課節。
+2. 空格是行動：可預約留白、已預約轉淡、不開放用斜紋。
+3. 預約改用右側欄三步：填寫 → 核對 → 完成，核對時寫「確認後即成立」而非「已成立」。
+4. 手機改為單日清單，大觸控區；週末自動跳到下週。
+5. 查詢結果按預約編號分組，配合「同一編號才可一次取消」的規則。
+6. 管理端待審預設全學年，導覽列顯示待審數。
+7. 場地圖由 2MB PNG 縮為約 17KB JPEG（33MB → 0.24MB）。
 
-| action | 權限 | 說明 |
-|---|---|---|
-| `getData` | 公開 | 取回所有公開資料；已登入時另含 `users`、`authCodes` |
-| `login` / `logout` | 公開 | 管理員登入 / 登出（PHP Session） |
-| `createBookings` | 公開 | 建立預約，伺服器完整驗證所有規則 |
-| `cancelBooking` | 公開 | 以 4 位數取消密碼刪除自己的預約 |
-| `saveRow` | 管理員 | 新增 / 更新任一資料表（依角色再檢查） |
-| `deleteRow` | 管理員 | 刪除資料（依角色再檢查） |
-| `restoreDB` | 超級管理員 | 由 Excel 備份還原（不含帳號，見下） |
+## 視覺規格
 
-權限規則：
+| 用途 | 值 |
+|---|---|
+| 內文字型 | Noto Sans TC（後備 PingFang TC、Microsoft JhengHei） |
+| 標題字型 | Noto Serif TC |
+| 主色 | `#0B6E5F`（hover `#08564A`，淺底 `#DCEEE8` / `#E3F1EC`） |
+| 頁面底色 / 面板 | `#F4F2EC` / `#FBFAF7`，卡片 `#FFFFFF` |
+| 文字 | 主 `#16222E`、次 `#3E4B58`、輔助 `#5B6672` |
+| 邊框 | `#E3E0D8`、`#D5D1C6`、`#CFCAC0` |
+| 待審 / 警示 | 標記 `#B45309`，膠囊 `#FBEFD9` 底 `#8A4F00` 字 |
+| 危險操作 | `#B42318` |
+| 圓角 | 按鈕 / 輸入框 8–10px，卡片 16px |
 
-- **超級管理員**：全部功能。
-- **一般管理員**：只能管理被分配到的課室及其預約；可修改自己的密碼，但不能改自己的角色、
-  帳號或所管轄課室；時間段 / 班級 / 假期 / 列印設定與帳號刪除均不開放。
-- **訪客**：只能讀取公開資料、建立預約、以取消密碼取消自己的預約。
+## 檔案格式說明
 
----
+`*.dc.html` 是 Claude Design 的元件格式：
 
-## 與原版的差異
+- 版面寫在 `<x-dc>` 內，`<helmet>` 放字型及全域樣式。
+- `{{name}}` 從底部 `<script type="text/x-dc">` 中 `Component.renderVals()` 回傳的值取值。
+- `<sc-for>` 為重複、`<sc-if>` 為條件顯示；狀態以 `this.setState()` 更新。
 
-移植過程中修正了幾個原本會影響正確性或安全性的問題：
+每個畫板都以 `<script src="./support.js">` 載入執行環境。在 Claude Design 編輯器內由編輯器提供；
+在此 repo 則由 `design/support.js` 提供，所以畫板原始碼毋須任何修改即可預覽。
+如要把畫板貼回 Claude Design，只需搬 `*.dc.html`、`canvas.json` 及圖片，不要連同 `support.js` 和 `index.html`。
 
-1. **預約規則改由伺服器驗證。** 原版的假期、關閉時段、時段重疊、人數上限、授權碼全部只在瀏覽器檢查，
-   直接呼叫 API 就能寫入重疊資料。現在這些規則都在 `BookingService` 內於同一個交易中重新驗證。
-2. **取消密碼不再下發到瀏覽器。** 原版把整張 `bookings`（含 `cancelCode`）送給所有人，
-   前端再自行比對。現在取消密碼永遠留在伺服器，改由 `cancelBooking` 驗證。
-3. **帳號資料只給已登入者。** 原版把 `users`（含密碼雜湊）與 `authCodes` 一併回傳給訪客。
-4. **密碼儲存方式。** 前端一樣先做 SHA-256 再送出（維持相容），伺服器再以 `password_hash()`
-   加上 bcrypt 保存；舊資料若是純 SHA-256，第一次登入成功後會自動升級。
-5. **登入狀態改用 PHP Session。** 原版只把使用者物件存在 `localStorage`，改一個值就能變成超級管理員。
-6. **輸出全面逸出。** 姓名、用途、班級、課室名稱等使用者輸入在插入畫面前都會經過 `Utils.esc()`。
-7. **修正的既有錯誤**：登入失敗時 `err` 變數被 catch 參數覆蓋導致無法顯示訊息；
-   `nav.js` 少匯入 `Utils`；多處行內事件少了 `App.` 前綴（時間段刪除、權限勾選、自訂時段開關）；
-   後台列印分頁與公開時間表共用同一組 `id`／`class` 導致勾選框畫錯位置；
-   後台呼叫但不存在的 `Print.renderPrintView`；`admin.js` 中重複定義的三個函式。
-8. **還原備份不再包含帳號。** 備份檔由瀏覽器產生、不含密碼雜湊，若照著還原會把所有帳號清空。
-   帳號請以 `mysqldump` 備份：
-
-   ```bash
-   mysqldump -u booking -p booking_system > backup.sql
-   ```
-
-9. **移除 Google Apps Script 相關程式碼**（`forceSyncFromGAS`、`fixDatabase` 等），本版本不再需要。
-
----
-
-## 注意事項
-
-- `index.html` 預設從 CDN 載入 Tailwind、Font Awesome、SheetJS、html2pdf。
-  若伺服器連不到外網，請依 `assets/vendor/README.md` 改為本機檔案。
-- 時間段名稱請使用 `08:00-09:00` 這種格式，系統才能判斷時段是否重疊；
-  若使用「第一節」這類名稱，只會做完全相同的字串比對。
-- 建議以 HTTPS 提供服務。若只能用 `http://` 的內網位址，瀏覽器的 `crypto.subtle` 會停用，
-  系統會自動改用內建的 SHA-256 實作，登入仍可正常運作。
+原始畫布仍保留在 Claude：<https://claude.ai/artifact/L19ysomHfTqK4LYYE5haWs>（只有擁有者可開啟）。

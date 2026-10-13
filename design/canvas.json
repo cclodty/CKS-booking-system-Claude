@@ -1,0 +1,106 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Admin.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "管理工作台 · 待審申請",
+      "w": 1440,
+      "x": 1520,
+      "y": 2644
+    },
+    "Drawer.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "桌面 · 預約側欄：填寫 → 核對 → 完成",
+      "w": 560,
+      "x": 1520,
+      "y": 0
+    },
+    "Lookup.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "查詢預約 · 按預約編號分組取消",
+      "w": 1440,
+      "x": 0,
+      "y": 2644
+    },
+    "Main.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "桌面 · 時間表先行（可點選課節）",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "Mobile.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "手機 · 單日課節清單",
+      "w": 401,
+      "x": 0,
+      "y": 1400
+    },
+    "MobileRooms.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "手機 · 選擇場地",
+      "w": 390,
+      "x": 470,
+      "y": 1400
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-27T14:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "principles": {
+      "fill": "teal",
+      "size": 24,
+      "text": "設計重點（功能不變）\n\n1. 時間表先行：拿走大橫幅與場地輪播，打開即見課節。\n2. 空格是行動：可預約留白、已預約轉淡、不開放用斜紋。\n3. 預約改用右側欄三步：填寫 → 核對 → 完成，核對時寫「確認後即成立」而非「已成立」。\n4. 手機改為單日清單，大觸控區；週末自動跳到下週。\n5. 查詢結果按預約編號分組，配合「同一編號才可一次取消」的規則。\n6. 管理端待審預設全學年，導覽列顯示待審數。\n7. 場地圖由 2MB PNG 縮為約 17KB JPEG（33MB → 0.24MB）。",
+      "w": 520,
+      "x": 940,
+      "y": 1400
+    },
+    "row1": {
+      "kind": "title1",
+      "maxW": 2080,
+      "text": "預約主流程 · 桌面",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "row2": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "手機",
+      "w": 240,
+      "x": 0,
+      "y": 1100
+    },
+    "row3": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "查詢與管理",
+      "w": 240,
+      "x": 0,
+      "y": 2344
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Drawer.dc.html",
+    "Mobile.dc.html",
+    "MobileRooms.dc.html",
+    "Lookup.dc.html",
+    "Admin.dc.html"
+  ],
+  "pages": [],
+  "title": "CKS 場地預約 UI 重設計"
+}

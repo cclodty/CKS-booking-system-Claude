@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CKS 場地預約互動預覽</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">
+<style>
+/* 總覽：按畫布三行分組，縮圖按每行寬度等比縮放 */
+:root {
+  --bg: #F4F2EC; --panel: #FBFAF7; --card: #FFFFFF;
+  --line: #E3E0D8; --line-hover: #B9C9C3; --sep: #D5D1C6;
+  --ink: #16222E; --ink-2: #3E4B58; --muted: #5B6672;
+  --brand: #0B6E5F; --brand-ink: #08564A;
+  --brand-soft: #E3F1EC; --brand-soft-hover: #D3EAE2; --brand-soft-ink: #0B5C4F;
+  --chip-bg: #16222E; --chip-fg: #FFFFFF;
+  --serif: 'Noto Serif TC', 'Songti TC', serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121A21; --panel: #172129; --card: #1C2731;
+    --line: #2C3945; --line-hover: #4E7A6E; --sep: #3A4855;
+    --ink: #E8ECEF; --ink-2: #B9C3CC; --muted: #93A0AB;
+    --brand: #5FD0B6; --brand-ink: #8FE0CC;
+    --brand-soft: #173A33; --brand-soft-hover: #1E4A41; --brand-soft-ink: #9FE3D2;
+    --chip-bg: #E8ECEF; --chip-fg: #16222E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121A21; --panel: #172129; --card: #1C2731;
+  --line: #2C3945; --line-hover: #4E7A6E; --sep: #3A4855;
+  --ink: #E8ECEF; --ink-2: #B9C3CC; --muted: #93A0AB;
+  --brand: #5FD0B6; --brand-ink: #8FE0CC;
+  --brand-soft: #173A33; --brand-soft-hover: #1E4A41; --brand-soft-ink: #9FE3D2;
+  --chip-bg: #E8ECEF; --chip-fg: #16222E;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; line-height: 1.6; }
+a { color: var(--brand); }
+a:hover { color: var(--brand-ink); }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+.top { background: var(--panel); border-bottom: 1px solid var(--line); }
+.top .wrap { min-height: 64px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 19px; font-weight: 700; }
+.brand img { width: 26px; height: 36px; object-fit: contain; }
+.top .sep { width: 1px; height: 18px; background: var(--sep); }
+.top .sub { font-size: 15px; color: var(--ink-2); }
+
+.intro { padding: 36px 0 8px; display: flex; flex-direction: column; gap: 8px; }
+.intro h1 { margin: 0; font-family: var(--serif); font-size: 32px; line-height: 1.25; text-wrap: balance; }
+.intro p { margin: 0; max-width: 46em; font-size: 15px; color: var(--ink-2); }
+
+.group { padding-top: 36px; }
+.group h2 { margin: 0 0 16px; font-family: var(--serif); font-size: 22px; }
+.row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+
+.card { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.thumb { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.thumb iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; pointer-events: none; }
+.cover { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-end; padding: 12px; text-decoration: none; }
+.cover span { opacity: 0; transition: opacity .15s; padding: 6px 12px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-fg); font-size: 13px; font-weight: 700; }
+.card:hover .cover span { opacity: 1; }
+.card:hover .thumb { border-color: var(--line-hover); }
+
+.meta h3 { margin: 0; font-size: 16px; line-height: 1.4; }
+.meta h3 a { color: var(--ink); text-decoration: none; }
+.meta h3 a:hover { color: var(--brand); text-decoration: underline; }
+.meta p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+.size { font-variant-numeric: tabular-nums; }
+.scenes { margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.scenes a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 8px; background: var(--brand-soft); color: var(--brand-soft-ink); font-weight: 500; text-decoration: none; }
+.scenes a:hover { background: var(--brand-soft-hover); color: var(--brand-soft-ink); }
+
+.notes { margin: 44px 0 0; padding: 22px 24px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.notes h2 { margin: 0 0 10px; font-family: var(--serif); font-size: 20px; }
+.notes ol { margin: 0; padding-left: 1.4em; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); column-gap: 32px; row-gap: 6px; font-size: 14px; color: var(--ink-2); }
+
+footer { padding: 28px 0 40px; font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .cover span { transition: none; } }
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .intro h1 { font-size: 26px; }
+  .notes { padding: 18px 16px; }
+  .notes ol { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+<div class="wrap">
+<span class="brand"><img src="assets/school-crest.png" alt="蔡高中學校徽" width="26" height="36">蔡高中學</span>
+<span class="sep" aria-hidden="true"></span>
+<span class="sub">場地預約</span>
+</div>
+</header>
+
+<main class="wrap">
+<div class="intro">
+<h1>UI 重設計 · 互動預覽</h1>
+<p>六個畫面都可以直接操作：點選課節、切換場地、填寫及提交預約、查詢及取消、批量審批。資料為示範資料，重新整理後會還原。點任何畫面開啟全尺寸預覽，右下角可返回此頁。</p>
+</div>
+
+<section class="group" aria-labelledby="g-desktop">
+<h2 id="g-desktop">預約主流程 · 桌面</h2>
+<div class="row" data-max="0.6">
+<article class="card" data-w="1440" data-h="1040">
+<div class="thumb">
+<iframe src="Main.dc.html?embed=1" width="1440" height="1040" tabindex="-1" aria-hidden="true" title="時間表縮圖"></iframe>
+<a class="cover" href="Main.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="Main.dc.html">桌面 · 時間表先行（可點選課節）</a></h3>
+<p>點選空白課節加入選取、左欄切換場地、按日期標題看單日。<span class="size">1440 × 1040</span></p>
+</div>
+</article>
+<article class="card" data-w="560" data-h="1040">
+<div class="thumb">
+<iframe src="Drawer.dc.html?embed=1" width="560" height="1040" tabindex="-1" aria-hidden="true" title="預約側欄縮圖"></iframe>
+<a class="cover" href="Drawer.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="Drawer.dc.html">桌面 · 預約側欄：填寫 → 核對 → 完成</a></h3>
+<p>三步提交流程。<span class="size">560 × 1040</span></p>
+<div class="scenes">情境：
+<a href="Drawer.dc.html">直接預約</a>
+<a href="Drawer.dc.html?mode=approval">需經審批</a>
+<a href="Drawer.dc.html?conflict=true">核對時撞期</a>
+</div>
+</div>
+</article>
+</div>
+</section>
+
+<section class="group" aria-labelledby="g-mobile">
+<h2 id="g-mobile">手機</h2>
+<div class="row" data-max="0.7">
+<article class="card" data-w="390" data-h="844">
+<div class="thumb">
+<iframe src="Mobile.dc.html?embed=1" width="390" height="844" tabindex="-1" aria-hidden="true" title="手機單日課節縮圖"></iframe>
+<a class="cover" href="Mobile.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="Mobile.dc.html">手機 · 單日課節清單</a></h3>
+<p>選日期，點「可預約」加入。<span class="size">390 × 844</span></p>
+</div>
+</article>
+<article class="card" data-w="390" data-h="844">
+<div class="thumb">
+<iframe src="MobileRooms.dc.html?embed=1" width="390" height="844" tabindex="-1" aria-hidden="true" title="手機選擇場地縮圖"></iframe>
+<a class="cover" href="MobileRooms.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="MobileRooms.dc.html">手機 · 選擇場地</a></h3>
+<p>分組清單，可搜尋場地名稱。<span class="size">390 × 844</span></p>
+</div>
+</article>
+</div>
+</section>
+
+<section class="group" aria-labelledby="g-admin">
+<h2 id="g-admin">查詢與管理</h2>
+<div class="row" data-max="0.6">
+<article class="card" data-w="1440" data-h="960">
+<div class="thumb">
+<iframe src="Lookup.dc.html?embed=1" width="1440" height="960" tabindex="-1" aria-hidden="true" title="查詢預約縮圖"></iframe>
+<a class="cover" href="Lookup.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="Lookup.dc.html">查詢預約 · 按預約編號分組取消</a></h3>
+<p>勾選同一組的日期，輸入 4 位取消碼。<span class="size">1440 × 960</span></p>
+</div>
+</article>
+<article class="card" data-w="1440" data-h="960">
+<div class="thumb">
+<iframe src="Admin.dc.html?embed=1" width="1440" height="960" tabindex="-1" aria-hidden="true" title="管理工作台縮圖"></iframe>
+<a class="cover" href="Admin.dc.html" tabindex="-1" aria-hidden="true"><span>開啟預覽 →</span></a>
+</div>
+<div class="meta">
+<h3><a href="Admin.dc.html">管理工作台 · 待審申請</a></h3>
+<p>勾選、搜尋、批量批准；撞期的申請不能勾選。<span class="size">1440 × 960</span></p>
+</div>
+</article>
+</div>
+</section>
+
+<section class="notes" aria-labelledby="g-notes">
+<h2 id="g-notes">設計重點（功能不變）</h2>
+<ol>
+<li>時間表先行：拿走大橫幅與場地輪播，打開即見課節。</li>
+<li>空格是行動：可預約留白、已預約轉淡、不開放用斜紋。</li>
+<li>預約改用右側欄三步：填寫 → 核對 → 完成，核對時寫「確認後即成立」而非「已成立」。</li>
+<li>手機改為單日清單，大觸控區；週末自動跳到下週。</li>
+<li>查詢結果按預約編號分組，配合「同一編號才可一次取消」的規則。</li>
+<li>管理端待審預設全學年，導覽列顯示待審數。</li>
+<li>場地圖由 2MB PNG 縮為約 17KB JPEG（33MB → 0.24MB）。</li>
+</ol>
+</section>
+</main>
+
+<footer>
+<div class="wrap">字型由 Google Fonts 載入，離線時改用系統字型。畫面由 <code>support.js</code> 在瀏覽器內直接渲染 <code>*.dc.html</code> 原始檔。</div>
+</footer>
+
+<script>
+(() => {
+  // 依每行可用寬度縮放縮圖；窄螢幕時每張各自填滿
+  const rows = document.querySelectorAll('.row');
+  const layout = () => {
+    for (const row of rows) {
+      const cards = Array.from(row.children);
+      const avail = row.clientWidth;
+      const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+      const max = parseFloat(row.dataset.max) || 0.6;
+      const total = cards.reduce((n, c) => n + Number(c.dataset.w), 0);
+      const stacked = avail < 720;
+      const rowScale = Math.min(max, (avail - gap * (cards.length - 1)) / total);
+      for (const c of cards) {
+        const w = Number(c.dataset.w), h = Number(c.dataset.h);
+        const s = stacked ? Math.min(max, avail / w) : rowScale;
+        c.style.width = w * s + 'px';
+        c.querySelector('.thumb').style.height = h * s + 'px';
+        c.querySelector('iframe').style.transform = 'scale(' + s + ')';
+      }
+    }
+  };
+  layout();
+  new ResizeObserver(layout).observe(document.querySelector('main'));
+})();
+</script>
+</body>
+</html>
