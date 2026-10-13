@@ -6,10 +6,27 @@
 
 ---
 
+## 預覽
+
+用瀏覽器直接開啟 **`design/index.html`**（雙擊即可，毋須伺服器）。總覽頁列出全部畫面的縮圖，
+點任何一個開啟全尺寸、可操作的預覽；右下角工具列可返回總覽。資料為示範資料，重新整理後還原。
+
+預約側欄的情境可用網址參數切換，亦可在工具列切換：
+
+| 網址 | 情境 |
+|---|---|
+| `Drawer.dc.html` | 直接預約 |
+| `Drawer.dc.html?mode=approval` | 需經審批 |
+| `Drawer.dc.html?conflict=true` | 核對時發現撞期 |
+
+---
+
 ## 目錄結構
 
 ```
 design/
+├── index.html             預覽總覽頁
+├── support.js             本地預覽用的執行環境，令 *.dc.html 可直接在瀏覽器開啟
 ├── canvas.json            畫布索引：各畫板的位置、尺寸、標題及設計重點備註
 ├── Main.dc.html           桌面 · 時間表先行（可點選課節）       1440 × 1040
 ├── Drawer.dc.html         桌面 · 預約側欄：填寫 → 核對 → 完成   560 × 1040
@@ -54,5 +71,8 @@ design/
 - `{{name}}` 從底部 `<script type="text/x-dc">` 中 `Component.renderVals()` 回傳的值取值。
 - `<sc-for>` 為重複、`<sc-if>` 為條件顯示；狀態以 `this.setState()` 更新。
 
-這些檔案需要 Design 編輯器的執行環境（`./support.js`）才能渲染，直接用瀏覽器開啟只會看到未套值的標記。
+每個畫板都以 `<script src="./support.js">` 載入執行環境。在 Claude Design 編輯器內由編輯器提供；
+在此 repo 則由 `design/support.js` 提供，所以畫板原始碼毋須任何修改即可預覽。
+如要把畫板貼回 Claude Design，只需搬 `*.dc.html`、`canvas.json` 及圖片，不要連同 `support.js` 和 `index.html`。
+
 原始畫布仍保留在 Claude：<https://claude.ai/artifact/L19ysomHfTqK4LYYE5haWs>（只有擁有者可開啟）。
