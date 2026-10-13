@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>手機 · 單日課節</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F2EC}
+a{color:#0B6E5F}a:hover{color:#08564A}
+button:focus-visible,a:focus-visible{outline:3px solid #0B6E5F;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif; color: #16222E; background: #F4F2EC; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 12px 0 16px; display: flex; align-items: center; gap: 10px; background: #FBFAF7; border-bottom: 1px solid #E3E0D8">
+<img src="assets/school-crest.png" alt="蔡高中學校徽" width="22" height="30" style="width: 22px; height: 30px; object-fit: contain">
+<span style="font-family: 'Noto Serif TC',serif; font-size: 17px; font-weight: 700">蔡高中學</span>
+<span style="font-size: 14px; color: #3E4B58">場地預約</span>
+<span style="flex-grow: 1"></span>
+<a href="Admin.dc.html" aria-label="管理員登入" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #16222E"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a7 7 0 0 0-14 0v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0"></path></svg></a>
+</header>
+
+<div style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0">
+<a href="MobileRooms.dc.html" aria-label="目前場地：圖書館研討室(大)，按此切換場地" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #FFFFFF; border: 1px solid #E3E0D8; border-radius: 14px; text-decoration: none; color: #16222E">
+<img src="assets/library-room-large.jpg" alt="" width="56" height="42" style="width: 56px; height: 42px; object-fit: cover; border-radius: 8px">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<strong style="font-size: 16px">圖書館研討室(大)</strong>
+<span style="font-size: 12px; color: #5B6672">上限 12 人 · 直接預約</span>
+</span>
+<span style="display: flex; align-items: center; gap: 2px; font-size: 13px; font-weight: 700; color: #0B6E5F">切換<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></span>
+</a>
+
+<div style="display: flex; align-items: center; gap: 4px">
+<button onClick="{{prevWeek}}" aria-label="上一週" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #16222E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<strong aria-live="polite" style="flex-grow: 1; text-align: center; font-size: 15px">{{weekLabel}}</strong>
+<button onClick="{{nextWeek}}" aria-label="下一週" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #16222E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+
+<div role="group" aria-label="選擇日期" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="5">
+<button onClick="{{d.pick}}" aria-pressed="{{d.on}}" aria-label="{{d.aria}}" style="height: 68px; border: 1px solid {{d.border}}; background: {{d.bg}}; color: {{d.fg}}; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-family: inherit; cursor: pointer; padding: 0">
+<span style="font-size: 12px">{{d.wk}}</span>
+<span style="font-size: 20px; font-weight: 700; line-height: 1.1">{{d.n}}</span>
+<span style="font-size: 11px; font-weight: 500; color: {{d.subFg}}">{{d.sub}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: auto; padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 8px">
+<sc-if value="{{holiday}}" hint-placeholder-val="{{false}}">
+<div style="padding: 28px 16px; border-radius: 14px; background: repeating-linear-gradient(135deg,#F3F1EC 0 8px,#EAE7E0 8px 16px); text-align: center; display: flex; flex-direction: column; gap: 6px">
+<strong style="font-size: 16px">國慶日 · 全校假期</strong>
+<span style="font-size: 13px; color: #3E4B58">這天不接受新預約，請選擇其他日期。</span>
+</div>
+</sc-if>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+<sc-if value="{{r.divider}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5B6672; padding: 2px 4px"><span>午休 12:20–14:00</span><span style="flex-grow: 1; height: 1px; background: #DAD6CC"></span></div>
+</sc-if>
+<sc-if value="{{r.normal}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 10px; align-items: stretch; min-height: 56px">
+<div style="width: 70px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center">
+<span style="font-size: 14px; font-weight: 700">{{r.label}}</span>
+<span style="font-size: 12px; color: #5B6672; font-variant-numeric: tabular-nums">{{r.time}}</span>
+</div>
+<sc-if value="{{r.isFree}}" hint-placeholder-val="{{true}}">
+<button onClick="{{r.toggle}}" aria-pressed="{{r.no}}" aria-label="{{r.aria}}" style="flex-grow: 1; border: 1px dashed #B9C9C3; background: #FFFFFF; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-family: inherit; font-size: 14px; color: #0B6E5F; cursor: pointer">可預約<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+</sc-if>
+<sc-if value="{{r.isSel}}" hint-placeholder-val="{{false}}">
+<button onClick="{{r.toggle}}" aria-pressed="{{r.yes}}" aria-label="{{r.aria}}" style="flex-grow: 1; border: 0; background: #0B6E5F; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-family: inherit; font-size: 14px; font-weight: 700; color: #FFFFFF; cursor: pointer">已選取 · 再按取消<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></button>
+</sc-if>
+<sc-if value="{{r.isBooked}}" hint-placeholder-val="{{false}}">
+<button aria-label="{{r.aria}}" style="flex-grow: 1; border: 0; background: #E6EBF1; border-radius: 12px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px; padding: 6px 14px; font-family: inherit; text-align: left; color: #1E3247; cursor: pointer">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700">{{r.who}}<sc-if value="{{r.series}}" hint-placeholder-val="{{false}}"><span style="font-size: 10px; font-weight: 700; background: #CBD5E1; padding: 0 5px; border-radius: 4px">長期</span></sc-if></span>
+<span style="font-size: 12px; color: #44566A">{{r.sub}}</span>
+</button>
+</sc-if>
+<sc-if value="{{r.isClosed}}" hint-placeholder-val="{{false}}">
+<div aria-label="{{r.aria}}" style="flex-grow: 1; border-radius: 12px; background: repeating-linear-gradient(135deg,#F3F1EC 0 6px,#EAE7E0 6px 12px); display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: #4A5663">{{r.reason}}</div>
+</sc-if>
+</div>
+</sc-if>
+</sc-for>
+<div style="display: flex; gap: 8px; padding: 8px 0 4px">
+<button style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 12px; font-family: inherit; font-size: 14px; color: #16222E"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0B6E5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"></path></svg>連續預約</button>
+<button style="flex-grow: 1; height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #D5D1C6; background: #FFFFFF; border-radius: 12px; font-family: inherit; font-size: 14px; color: #16222E"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0B6E5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0"></path></svg>自訂時間</button>
+</div>
+</div>
+
+<div style="flex-shrink: 0; padding: 10px 16px; background: #FFFFFF; border-top: 1px solid #E3E0D8; display: flex; align-items: center; gap: 12px">
+<div style="flex-grow: 1; display: flex; flex-direction: column" aria-live="polite">
+<strong style="font-size: 15px">{{countLabel}}</strong>
+<span style="font-size: 12px; color: #5B6672">{{countSub}}</span>
+</div>
+<button onClick="{{clearAll}}" style="height: 44px; padding: 0 10px; border: 0; background: transparent; font-family: inherit; font-size: 14px; color: #0B6E5F; cursor: pointer">清除</button>
+<button disabled="{{empty}}" style="height: 48px; padding: 0 20px; display: flex; align-items: center; gap: 6px; border: 0; background: {{nextBg}}; color: {{nextFg}}; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">下一步<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+
+<nav aria-label="主要功能" style="height: 64px; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #FBFAF7; border-top: 1px solid #E3E0D8">
+<a href="Mobile.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 700; color: #0B6E5F; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z"></path></svg>場地預約</a>
+<a href="Lookup.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 500; color: #4A5663; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"></path></svg>查詢預約</a>
+<a href="Admin.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 500; color: #4A5663; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3z"></path></svg>管理</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { week: 0, day: 1, sel: { '2026-09-29': [1, 2], '2026-09-30': [1] } };
+  }
+  renderVals() {
+    const s = this.state;
+    const SLOTS = [
+      { id: 1, l: '第 1 節', t: '08:30–09:10' }, { id: 2, l: '第 2 節', t: '09:20–10:00' }, { id: 4, l: '第 3 節', t: '10:05–10:45' },
+      { id: 5, l: '第 4 節', t: '10:50–11:35' }, { id: 6, l: '第 5 節', t: '11:40–12:20' }, { lunch: true },
+      { id: 8, l: '第 6 節', t: '14:00–14:40' }, { id: 9, l: '第 7 節', t: '14:45–15:30' }, { id: 11, l: '第 8 節', t: '15:35–16:15' },
+      { id: 12, l: '放學後', t: '16:15–17:45' }
+    ];
+    const pad = n => String(n).padStart(2, '0');
+    const add = (ds, n) => { const d = new Date(ds + 'T12:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+    const WK = ['日', '一', '二', '三', '四', '五', '六'];
+    const wd = ds => WK[new Date(ds + 'T12:00:00').getDay()];
+    const md = ds => (+ds.slice(5, 7)) + '月' + (+ds.slice(8, 10)) + '日';
+    const dn = ds => Math.round(new Date(ds + 'T12:00:00').getTime() / 86400000);
+    const mon = add('2026-09-28', 7 * s.week);
+    const week = [0, 1, 2, 3, 4].map(i => add(mon, i));
+    const HOL = { '2026-10-01': '國慶日' };
+    const BLOCK = { '2026-10-02|12': '封鎖：校舍維修' };
+    const FIX = {
+      '2026-09-28|1': ['陳老師', '中文科 · 閱讀分享', true], '2026-09-28|2': ['陳老師', '中文科 · 閱讀分享', true],
+      '2026-09-29|4': ['張老師', '數學科 · 學生輔導', false],
+      '2026-09-30|8': ['何老師', '英文科 · English Club', true], '2026-09-30|9': ['何老師', '英文科 · English Club', true],
+      '2026-10-02|6': ['林老師', '中文科 · 小組討論', false],
+      '2026-09-28|12': ['梁同學', 'F4A · 自習小組', true], '2026-09-29|12': ['梁同學', 'F4A · 自習小組', true]
+    };
+    const PEOPLE = [['李老師', '中文科 · 專題研習'], ['黃老師', '科學科 · 實驗準備'], ['周老師', '輔導組 · 個別面談'], ['梁同學', 'F4A · 自習小組']];
+    const lessonIds = SLOTS.filter(x => !x.lunch).map(x => x.id);
+    const booked = (ds, id) => {
+      if (s.week === 0) return FIX[ds + '|' + id] || null;
+      const i = lessonIds.indexOf(id), pair = Math.floor(i / 2), h = (37 + dn(ds) * 11 + pair * 5) % 19;
+      return h < 4 ? PEOPLE[(dn(ds) + pair) % PEOPLE.length].concat([h === 0]) : null;
+    };
+    const sel = s.sel;
+    const toggle = (ds, id) => () => {
+      const cur = Object.assign({}, this.state.sel), list = (cur[ds] || []).slice(), at = list.indexOf(id);
+      if (at >= 0) list.splice(at, 1); else list.push(id);
+      list.sort((a, b) => lessonIds.indexOf(a) - lessonIds.indexOf(b));
+      if (list.length) cur[ds] = list; else delete cur[ds];
+      this.setState({ sel: cur });
+    };
+    const ds = week[s.day];
+    const days = week.map((d, i) => {
+      const on = i === s.day, hol = !!HOL[d], picked = (sel[d] || []).length;
+      return {
+        key: d, on, wk: WK[new Date(d + 'T12:00:00').getDay()], n: +d.slice(8, 10),
+        sub: hol ? '假期' : picked ? '已選 ' + picked : '',
+        aria: md(d) + ' 星期' + wd(d) + (hol ? '，全校假期' : '') + (picked ? '，已選 ' + picked + ' 節' : ''),
+        bg: on ? '#16222E' : hol ? '#EFECE6' : '#FFFFFF', fg: on ? '#FFFFFF' : '#16222E', border: on ? '#16222E' : '#E3E0D8',
+        subFg: on ? '#CFE7DF' : picked ? '#0B6E5F' : '#5B6672',
+        pick: () => this.setState({ day: i })
+      };
+    });
+    const holiday = !!HOL[ds];
+    const rows = holiday ? [] : SLOTS.map(sl => {
+      if (sl.lunch) return { key: 'lunch', divider: true, normal: false };
+      const bk = booked(ds, sl.id), block = ds < '2026-09-27' ? '已過期' : BLOCK[ds + '|' + sl.id], picked = (sel[ds] || []).includes(sl.id);
+      const kind = block ? 'closed' : bk ? 'booked' : picked ? 'sel' : 'free';
+      return {
+        key: 'r' + sl.id, divider: false, normal: true, label: sl.l, time: sl.t,
+        isFree: kind === 'free', isSel: kind === 'sel', isBooked: kind === 'booked', isClosed: kind === 'closed',
+        who: bk ? bk[0] : '', sub: bk ? bk[1] : '', series: !!(bk && bk[2]), reason: block || '', yes: true, no: false,
+        toggle: toggle(ds, sl.id),
+        aria: md(ds) + ' ' + sl.l + '，' + (kind === 'booked' ? '已預約：' + bk[0] : kind === 'closed' ? block : kind === 'sel' ? '已選取' : '可預約')
+      };
+    });
+    const count = Object.values(sel).reduce((n, l) => n + l.length, 0), dayCount = Object.keys(sel).length;
+    return {
+      weekLabel: md(week[0]) + ' – ' + md(week[4]),
+      prevWeek: () => this.setState({ week: this.state.week - 1, day: 0 }), nextWeek: () => this.setState({ week: this.state.week + 1, day: 0 }),
+      days, rows, holiday,
+      countLabel: count ? '已選 ' + count + ' 節' : '尚未選取課節',
+      countSub: count ? dayCount + ' 個日期 · 可切換日期繼續選' : '點選「可預約」加入',
+      empty: count === 0, nextBg: count ? '#0B6E5F' : '#E3E0D8', nextFg: count ? '#FFFFFF' : '#5B6672',
+      clearAll: () => this.setState({ sel: {} })
+    };
+  }
+}
+</script>
+</body>
+</html>

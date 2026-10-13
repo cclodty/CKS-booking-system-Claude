@@ -1,2 +1,0 @@
-# 這個目錄不應該被瀏覽器直接存取（適用於 Apache 2.4）
-Require all denied
